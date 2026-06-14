@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>El Poder de la Imaginación</title>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --fs: 22px; --lh: 2.1;
+  --pg: #fdf6e3; --tx: #3b2f1e; --mu: #7a6040; --ac: #8b6914; --bd: #c9aa7c;
+  --gold: #c8a86b; --frame: #1a140d; --frame2: #241b0f; --bar: #3a2e1a;
+}
+html { height: 100%; }
+body { font-family: 'Lexend', sans-serif; background: #12100a; display: flex; flex-direction: column; align-items: center; min-height: 100vh; padding: 24px 12px 40px; }
+.kindle { width: 100%; max-width: 860px; background: var(--frame); border-radius: 20px; box-shadow: 0 20px 80px rgba(0,0,0,0.7); display: flex; flex-direction: column; overflow: hidden; }
+.topbar { background: var(--frame); display: flex; align-items: center; justify-content: space-between; padding: 14px 24px; border-bottom: 1.5px solid var(--bar); gap: 12px; flex-shrink: 0; }
+.book-title { font-family: 'Lora', serif; font-size: 14px; color: var(--gold); letter-spacing: 0.05em; font-style: italic; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1; }
+.topbar-right { display: flex; gap: 8px; flex-shrink: 0; }
+.icon-btn { background: #2e2312; border: 1px solid var(--bar); color: var(--gold); cursor: pointer; width: 44px; height: 44px; border-radius: 10px; font-size: 20px; display: flex; align-items: center; justify-content: center; transition: background 0.2s; }
+.icon-btn:hover { background: #3a2e18; border-color: var(--gold); }
+.screen { background: var(--pg); padding: 48px 64px; overflow-y: auto; -webkit-overflow-scrolling: touch; transition: background 0.3s; position: relative; }
+.screen.dark  { --pg:#1c1710; --tx:#d4b896; --mu:#9e8060; --ac:#c8a86b; --bd:#5a4020; background:#1c1710; }
+.screen.white { --pg:#fff; --tx:#111; --mu:#555; --ac:#7a5c00; --bd:#ccc; background:#fff; }
+.toc-panel { display: none; position: absolute; inset: 0; background: var(--pg); z-index: 20; padding: 36px 40px; flex-direction: column; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+.toc-panel.open { display: flex; }
+.toc-heading { font-family: 'Lora', serif; font-size: 22px; color: var(--ac); margin-bottom: 24px; border-bottom: 1.5px solid var(--bd); padding-bottom: 14px; }
+.toc-list { list-style: none; flex: 1; }
+.toc-item { padding: 16px 0; border-bottom: 0.5px solid var(--bd); cursor: pointer; display: flex; gap: 16px; align-items: flex-start; transition: opacity 0.2s; }
+.toc-item:hover { opacity: 0.6; }
+.toc-num { font-size: 12px; color: var(--ac); font-family:'Lora',serif; font-style:italic; min-width:100px; padding-top:3px; }
+.toc-name { font-size: 18px; color: var(--tx); line-height: 1.4; }
+.toc-close { background: var(--ac); border: none; color: #fff; padding: 14px 28px; border-radius: 12px; font-family: 'Lexend',sans-serif; font-size: 16px; cursor: pointer; align-self: flex-start; margin-top: 24px; }
+.toc-close:hover { opacity: 0.85; }
+.cover { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 80px 20px; }
+.cover-title { font-family: 'Lora', serif; font-size: 42px; font-weight: 600; color: var(--tx); line-height: 1.2; margin-bottom: 20px; }
+.cover-divider { width: 56px; height: 2px; background: var(--bd); margin: 0 auto 20px; }
+.cover-author { font-size: 14px; color: var(--mu); letter-spacing: 0.2em; text-transform: uppercase; }
+.section-tag { font-size: 11px; letter-spacing: 0.22em; color: var(--ac); text-transform: uppercase; margin-bottom: 8px; opacity: 0.75; }
+.ch-title { font-family: 'Lora', serif; font-size: 28px; font-weight: 600; color: var(--tx); margin-bottom: 32px; line-height: 1.25; border-bottom: 1.5px solid var(--bd); padding-bottom: 20px; }
+.body-text { font-family: 'Lexend', sans-serif; font-size: var(--fs); line-height: var(--lh); color: var(--tx); letter-spacing: 0.025em; word-spacing: 0.07em; }
+.body-text p { margin-bottom: 1.5em; }
+.body-text p:first-child::first-letter { font-family: 'Lora', serif; font-size: 3.4em; font-weight: 600; float: left; line-height: 0.78; margin-right: 10px; margin-top: 7px; color: var(--ac); }
+.verse-block { border-left: 3px solid var(--bd); padding: 16px 24px; margin: 24px 0; background: rgba(139,105,20,0.07); border-radius: 0 10px 10px 0; }
+.verse-block p { font-style: italic; margin-bottom: 0.5em; }
+.verse-block .asterisk-note { font-size: 0.88em; font-style: normal; color: var(--mu); }
+.verse-block .verse-ref { font-size: 0.82em; color: var(--mu); font-style: normal; margin-bottom: 0; margin-top: 8px; }
+.prayer-block { border: 1.5px solid var(--bd); padding: 24px 28px; margin: 28px 0; background: rgba(139,105,20,0.05); border-radius: 12px; font-style: italic; line-height: var(--lh); color: var(--tx); font-size: var(--fs); }
+.prog-bar-wrap { background: var(--frame); padding: 10px 24px; display: flex; align-items: center; gap: 14px; border-top: 1.5px solid var(--bar); flex-shrink: 0; }
+.prog-track { flex:1; height:6px; background:var(--bar); border-radius:3px; overflow:hidden; }
+.prog-fill { height:100%; background:var(--gold); border-radius:3px; transition:width 0.4s; width:0%; }
+.prog-label { font-size:12px; color:var(--gold); white-space:nowrap; font-family:'Lexend',sans-serif; min-width:70px; text-align:right; }
+.nav-bar { background: var(--frame2); padding: 16px 20px; display: flex; align-items: center; justify-content: space-between; gap: 12px; border-top: 1.5px solid var(--bar); flex-shrink: 0; }
+.nav-btn { background: #2e2312; border: 1.5px solid var(--bar); color: var(--gold); cursor: pointer; font-size: 18px; font-family:'Lexend',sans-serif; font-weight:500; padding: 16px 28px; border-radius: 12px; display: flex; align-items: center; gap: 8px; min-width: 130px; justify-content: center; transition: background 0.2s; }
+.nav-btn:hover { background:#3a2e18; border-color:var(--gold); }
+.nav-btn:disabled { opacity:0.25; cursor:default; }
+.chapter-indicator { font-size:12px; color:var(--gold); letter-spacing:0.1em; text-transform:uppercase; opacity:0.75; text-align:center; }
+.controls-bar { background: var(--frame); padding: 14px 20px; display: flex; align-items: center; justify-content: center; gap: 24px; border-top: 1.5px solid var(--bar); flex-wrap: wrap; flex-shrink: 0; }
+.ctrl-group { display:flex; align-items:center; gap:8px; }
+.ctrl-label { font-size:11px; color:#9a7a4a; letter-spacing:0.12em; text-transform:uppercase; white-space:nowrap; }
+.ctrl-btn { background:#2e2312; border:1.5px solid var(--bar); color:var(--gold); cursor:pointer; font-size:16px; font-weight:600; width:48px; height:48px; border-radius:10px; font-family:'Lexend',sans-serif; display:flex; align-items:center; justify-content:center; transition:background 0.2s; }
+.ctrl-btn:hover { background:#3a2e18; border-color:var(--gold); }
+.fs-display { font-size:14px; color:var(--gold); min-width:48px; text-align:center; font-family:'Lexend',sans-serif; }
+.theme-btn { width:36px; height:36px; border-radius:50%; border:2.5px solid var(--bar); cursor:pointer; transition:border-color 0.2s, transform 0.15s; }
+.theme-btn:hover { transform:scale(1.12); }
+.theme-btn.active { border-color:var(--gold); box-shadow:0 0 0 3px rgba(200,168,107,0.35); }
+.t-sepia { background:#f5ead0; } .t-white { background:#fff; border-color:#888; } .t-dark { background:#1c1710; }
+@media (max-width: 600px) {
+  body { padding: 0 0 20px; }
+  .kindle { border-radius: 0; }
+  .screen { padding: 28px 20px; }
+  .ch-title { font-size: 22px; }
+  .cover-title { font-size: 30px; }
+  .nav-btn { font-size:16px; padding:14px 16px; min-width:0; flex:1; }
+  .ctrl-btn { width:52px; height:52px; }
+  .theme-btn { width:40px; height:40px; }
+}
+@media (min-width: 1100px) {
+  .screen { padding: 60px 100px; }
+}
+</style>
+</head>
+<body>
+<div class="kindle">
+  <div class="topbar">
+    <span class="book-title">El Poder de la Imaginación</span>
+    <div class="topbar-right">
+      <button class="icon-btn" id="home-btn" title="Portada">⌂</button>
+      <button class="icon-btn" id="toc-btn" title="Contenido">☰</button>
+      <button class="icon-btn" id="bm-btn" title="Marcar página">🔖</button>
+    </div>
+  </div>
+
+  <div class="screen" id="screen">
+    <div class="toc-panel" id="toc-panel">
+      <div class="toc-heading">📖 Contenido del libro</div>
+      <ul class="toc-list" id="toc-list"></ul>
+      <button class="toc-close" id="toc-close">← Volver a leer</button>
+    </div>
+    <div id="content"></div>
+  </div>
+
+  <div class="prog-bar-wrap">
+    <div class="prog-track"><div class="prog-fill" id="prog-fill"></div></div>
+    <span class="prog-label" id="prog-label">1 de 8</span>
+  </div>
+
+  <div class="nav-bar">
+    <button class="nav-btn" id="prev-btn" disabled>&#8249; Anterior</button>
+    <span class="chapter-indicator" id="chapter-indicator">Portada</span>
+    <button class="nav-btn" id="next-btn">Siguiente &#8250;</button>
+  </div>
+
+  <div class="controls-bar">
+    <div class="ctrl-group">
+      <span class="ctrl-label">Letra</span>
+      <button class="ctrl-btn" id="fdn">A–</button>
+      <span class="fs-display" id="fs-label">22</span>
+      <button class="ctrl-btn" id="fup">A+</button>
+    </div>
+    <div class="ctrl-group">
+      <span class="ctrl-label">Tema</span>
+      <button class="theme-btn t-sepia active" id="th-sepia" title="Sépia"></button>
+      <button class="theme-btn t-white" id="th-white" title="Blanco"></button>
+      <button class="theme-btn t-dark" id="th-dark" title="Oscuro"></button>
+    </div>
+  </div>
+</div>
+
+<script>
+const PAGES = [
+  {
+    section: '', title: 'Portada',
+    html: `<div class="cover">
+      <div class="cover-title">El Poder de la<br>Imaginación</div>
+      <div class="cover-divider"></div>
+      <div class="cover-author">Andrew Wommack</div>
+    </div>`
+  },
+  {
+    section: 'Introducción', title: 'Introducción',
+    html: `<div class="body-text">
+<p>La imaginación es el motor, la fuente de energía de la vida. Sin embargo, la mayoría de las personas no comprende su importancia. No entienden que Dios entretejió la imaginación en nuestra misma esencia. El Salmo 103:14 dice:</p>
+<div class="verse-block">
+  <p>Porque Él sabe de qué estamos hechos*,<br>se acuerda de que somos solo polvo.</p>
+  <p class="asterisk-note">*(Lit: conoce nuestra estructura)</p>
+  <p class="verse-ref">Salmos 103:14 Biblia de las Américas</p>
+</div>
+<p>La misma palabra hebrea que se tradujo como «estructura» en este versículo, fue traducida como «imaginación» o «imaginaciones» cinco veces en el Antiguo Testamento (Gén. 6:5, 8:21; Deut. 31:21; 1 Cró. 28:9 y 29:18). Nuestra imaginación es el armazón o la columna vertebral de nuestra existencia. Es la puerta hacia nuestro potencial y afecta nuestra manera de ver la vida (Prov. 23:7). Sin embargo, la gente suele relegar la imaginación al terreno de la fantasía infantil. Subestiman su influencia y tratan de recibir de Dios sin antes haber activado su imaginación.</p>
+<p>Cuando Jamie y yo comenzamos en el ministerio, el Señor nos dio la visión de alcanzar multitudes, de impactar a personas en todo el mundo. Y aunque sabíamos que esta era la voluntad de Dios para nuestra vida, había muy poca evidencia que indicara que se haría realidad. Las personas se mantenían alejadas de nuestras reuniones por miles. Nos costaba mucho avanzar, y resultaba frustrante. Entonces, en 2002, el Señor me habló a través del Salmo 78 y me dijo que lo estaba limitando con mi mentalidad estrecha. Verás, aunque conocía la voluntad de Dios para mi vida, no podía verme a mí mismo cumpliéndola. No lograba visualizarme de pie frente a miles de personas, ni influyendo a millones a través de la televisión. No podía imaginar a la gente mencionando mi nombre a la par de otros ministros que habían impactado al mundo. Y como no podía verlo, no lo lograba. El Señor me mostró que, para cumplir su voluntad, tenía que cambiar mi forma de pensar. Debía empezar a usar mi imaginación.</p>
+<p>Tu imaginación es como tu vientre espiritual; es tu centro creativo. Génesis 11 registra el relato de la torre de Babel. A medida que la población de la antigüedad crecía y comenzaba a esparcirse sobre la faz de la tierra, la gente se congregó en las llanuras de Babilonia. Allí, idearon un plan para hacerse de un nombre (Gén. 11:4) y llegar hasta el cielo.</p>
+<div class="verse-block">
+  <p>Y descendió el SEÑOR para ver la ciudad y la torre que edificaban los hijos de los hombres. Y dijo el SEÑOR: He aquí el pueblo es uno, y todos tienen un solo lenguaje; y han comenzado la obra, y ahora nada los detendrá de lo que han imaginado hacer.</p>
+  <p class="verse-ref">Génesis 11:5-6, énfasis añadido</p>
+</div>
+<p>¡Es asombroso! La imaginación de este pueblo no regenerado representaba una amenaza tan grande para el plan de Dios para la humanidad, que Él tuvo que ponerles un obstáculo —confundiendo su idioma— para frenarlos y darle tiempo a su plan de desarrollarse. Dios vio la imaginación de ellos como una amenaza para su diseño humano. ¡Increíble!</p>
+<p>La imaginación es poderosa. Es el primer paso para la acción. Si puedes imaginar algo, puedes hacerlo. Sin embargo, muchos cristianos no lo comprenden. Creyentes de todo el mundo oran por sanidad y jamás la experimentan. Oran por prosperidad, pero nunca la reciben. ¿Por qué? Porque no saben cómo usar la imaginación de forma positiva y guiada por el Espíritu. No se ven a sí mismos sanos. No se ven a sí mismos prósperos.</p>
+<p>Si quieres ver cumplida la voluntad de Dios para tu vida, si deseas alcanzar todo tu potencial, necesitas comprender tanto el poder de tu imaginación como la forma correcta de utilizarla.</p>
+</div>`
+  },
+  {
+    section: 'Capítulo 1', title: '¿Qué es la imaginación?',
+    html: `<div class="body-text">
+<p>Según el Diccionario Electrónico Houghton Mifflin American Heritage, la palabra imaginación significa «el proceso o poder de formar una imagen mental de algo que no es real o que no está presente». Muchas personas confunden la imaginación con la visión. Sin embargo, la visión es «una imagen mental producida por la imaginación» (HMAHED, por sus siglas en inglés). No puedes tener una visión sin una imaginación. Y aunque a veces estas palabras se usen indistintamente, quiero enfocarme en la imaginación: la capacidad de ver lo que no está presente.</p>
+<p>La mayoría de los adultos asocian la imaginación con la inmadurez. Les han enseñado que usar la imaginación o creer en algo que no pueden ver es una fantasía. Este mismo diccionario define fantasía como una «ilusión» o un «engaño», una «idea extravagante» o «soñar despierto». Basta con mirar la definición de la palabra engaño: «una creencia falsa que se sostiene a pesar de la evidencia que la invalida». La fantasía no es real. No se basa en pruebas comprobables. Pero la imaginación sí es real.</p>
+<p>La imaginación es la capacidad de ver con la mente lo que no puedes ver con los ojos. Si te preguntara cuántas ventanas había en la casa de tu infancia, apuesto a que lo sabrías, aunque probablemente nunca las contaste. Gracias a tu imaginación, el ojo de tu mente puede recrear el hogar de tu niñez y llevarte por él, habitación por habitación.</p>
+<p>Ya sea que te des cuenta o no, usas tu imaginación todos los días. La utilizas para recordar dónde estacionaste el auto o para darle indicaciones a alguien. No puedes vivir sin imaginación. Si yo te dijera la palabra perro, no visualizarías las letras P-E-R-R-O en tu mente. En su lugar, tu mente evocaría la imagen de un perro. Si tuvieras un perrito blanco, probablemente esa sería la imagen que verías. Pero yo podría cambiar tu imagen con mis palabras. Si dijera las palabras perro negro y grande, tu imagen cambiaría.</p>
+<p>La imaginación te ayuda a «ver» lo que no se puede ver. Crea las imágenes en tu mente que te ayudan a recordar, leer y planificar. Pero la imaginación solo puede trabajar con la información que tú le das, sea buena o mala, correcta o incorrecta (Luc. 6:45). Si llenas tu imaginación con la basura de este mundo, eso es lo que producirá. Pero si renuevas tu mente con la verdad de la Palabra, tu imaginación te ayudará a recibir de Dios (Rom. 12:2).</p>
+<p>Si tuviera el espacio, podría repasar casi todos los personajes principales de la Biblia y mostrar cómo cada uno usó su imaginación para recibir de Dios. Cuando el Señor le habló a Abram (antes de que su nombre fuera cambiado a Abraham) en Génesis, Dios le dijo que dejara la casa de su padre y fuera a una tierra que más tarde heredaría (Gén. 12:1). Abram no podía ver la tierra de la que Dios hablaba; no sabía por experiencia que sería una buena tierra. Hasta donde sabemos, nunca había viajado más allá de Harán (Gén. 11:31). Entonces, ¿por qué Abram dejó todo lo que conocía? Creo que fue porque las palabras del Señor activaron su imaginación.</p>
+<p>La imaginación de Abram fue esencial para su capacidad de recibir de Dios, y así convertirse en Abraham. Y lo mismo ocurre con la tuya. No puedes cumplir la voluntad de Dios para tu vida por accidente. Hace un tiempo, recibí un correo electrónico de una mujer que trabaja en uno de nuestros campus del instituto bíblico. Estaba alabando al Señor y dándome las gracias, diciendo: «Fui hecha para lo que estoy haciendo. Este es exactamente el lugar donde Dios quiere que esté». Lamentablemente, la mayoría de las personas no pueden decir lo mismo. No conocen la voluntad de Dios para su vida. No tienen una visión —una imagen mental— de su futuro. Son como el agua: simplemente se dejan llevar por la corriente, siguiendo el camino de menor resistencia. Pero cualquier pez, incluso uno muerto, puede flotar río abajo.</p>
+<p>Cuando el Señor le habló a Abram y le dijo que fuera, Abram no sabía a dónde iba. No sabía cómo sería la vida fuera de Harán, pero emprendió el viaje de todos modos. Abram tenía la visión de una herencia mejor que la que Ur o Harán podían ofrecerle, y mientras buscaba al Señor, la imaginación de Abram comenzó a trabajar. A medida que recorría la tierra, Abram se veía a sí mismo poseyéndola. Veía a sus descendientes viviendo allí. Su imaginación produjo una visión que se volvía cada vez más clara a medida que se alejaba de Ur.</p>
+<p>Creo que por eso el Señor le dio a Abraham la promesa de que su descendencia sería tan numerosa como «el polvo de la tierra» (Gén. 13:16) y «las estrellas» (Gén. 15:5). Todos los días Abraham tenía polvo en los pies, y todas las noches miraba las estrellas. Estas cosas mantenían la promesa de Dios constantemente frente a él y ayudaban a avivar su imaginación.</p>
+<p>La visión de Abraham fue como un mapa de ruta para su vida. Piénsalo. Si estuvieras viajando de Colorado a Nueva York, querrías un mapa: una idea o imagen de hacia dónde te diriges. Sin uno, cualquier camino daría igual. Pero no cualquier camino te llevará a donde quieres ir en la vida.</p>
+<p>La mayoría de los cristianos no tienen una visión clara para su vida. No logran ver la voluntad de Dios. Sin embargo, en lugar de buscar al Señor y activar su imaginación como lo hizo Abraham, dejan que las circunstancias de la vida los empujen de un lado a otro. Abandonan una buena iglesia y el sistema de apoyo de amigos y familiares para mudarse al otro lado del país por un aumento de cien dólares. Gastan miles en medicamentos que les ayudan a sobrellevar la enfermedad y el dolor. Hipotecan su futuro para comprar botes que no usarán y televisores adicionales que no necesitan. Se conforman con menos de lo mejor de Dios.</p>
+<p>Proverbios 29:18 dice: «Donde no hay visión, el pueblo perece». La visión, o la imagen producida en tu imaginación, te da esperanza para el futuro. Sin ella, nunca cumplirás el plan de Dios para tu vida. Las circunstancias te desviarán, las dificultades te robarán y terminarás rindiéndote. En los cincuenta años transcurridos desde que Dios nos llamó a Jamie y a mí al ministerio, hemos tenido muchas oportunidades para rendirnos. Hemos lidiado con la pobreza y la calumnia, y hemos perdido relaciones, pero la visión nos mantuvo en marcha. Cuando me escupieron y me amenazaron a punta de pistola, cuando la gente mintió sobre mí, cuando la gente llamó secta al ministerio, habría sido fácil decir: «Esto no vale la pena». En lugar de eso, dejé que mi visión me motivara. Me animé a mí mismo enfocándome en lo que Dios me dijo que hiciera, ¡y ahora está dando frutos!</p>
+<p>La visión de una persona la sostendrá cuando todo a su alrededor parezca contrario.</p>
+<p>¿Tienes una visión: una imagen del futuro llena de esperanza? ¿Coincide esa imagen con la que Dios tiene para ti? La buena noticia es que, independientemente de las decisiones que hayas tomado o de lo lejos que te encuentres de tu rumbo, Dios es mejor que cualquier sistema GPS. Si has tomado un camino equivocado o te has desviado, Él puede hacer que regreses a la ruta. Pero necesitarás el poder de tu imaginación.</p>
+</div>`
+  },
+  {
+    section: 'Capítulo 2', title: 'El eslabón perdido',
+    html: `<div class="body-text">
+<p>Tu imaginación es responsable de trazar la ruta que sigue tu vida. Te des cuenta o no, tu vida es exactamente como la has imaginado. Proverbios 23:7 dice: «Porque cual es su pensamiento en su corazón, tal es él». Si te ves a ti mismo pobre, no importa cuántos ceros tenga tu cheque de pago, el dinero nunca te alcanzará para llegar a fin de mes. Si te sientes víctima u oprimido, siempre habrá alguna persona o circunstancia que te impida alcanzar tus metas. Quizá sepas que Dios quiere que estés sano y próspero (3 Juan 2). Tal vez incluso estés orando por ello. Pero si no puedes verte a ti mismo como Dios te ve, nunca experimentarás lo mejor que Él tiene para ti.</p>
+<p>Hace años, vino a trabajar con nosotros una mujer que había sufrido abusos por parte de su marido. Aunque había logrado salir de esa situación, les temía a los hombres; a todos ellos. En su mente, los hombres eran malos y no se podía confiar en ninguno. Para ella, cualquier cosa que hiciera un hombre era un intento de controlarla o manipularla. Esta mujer permitió que las circunstancias de su pasado pintaran un cuadro distorsionado de la realidad, y filtraba cada interacción a través de esa imagen. Su imaginación estaba fuera de control, y le costó muy caro.</p>
+<p>Tu imaginación es el factor de control predominante en tu vida. Funciona como el regulador de velocidad de un automóvil. Algunos vehículos vienen con mecanismos de seguridad integrados llamados limitadores. Un limitador controla la velocidad del auto. Una vez que el conductor alcanza la velocidad máxima configurada, el limitador se activa para restringir la cantidad de aire y combustible que recibe el motor. Sin importar lo que haga el conductor, no puede superar ese límite. Tu imaginación funciona de la misma manera. Pero a diferencia de un automóvil, el Fabricante no establece los límites de tu imaginación. Lo haces tú.</p>
+<p>Un buen amigo mío creció con un padre cruel y colérico. Vivir bajo su techo era opresivo. Una vez me contó que su padre usaba autos viejos para sacarles repuestos. Probablemente tenían unos cincuenta autos chatarra estacionados en su granja en cualquier momento dado, y su papá sacaba piezas de uno para reparar otro. Cada vez que mi amigo lo ayudaba a reparar los vehículos, su padre le decía: «¡Eres un estúpido! Ni siquiera puedes enroscar una tuerca en un tornillo».</p>
+<p>Después de años de escuchar ese mensaje, se convirtió en una profecía autocumplida en la vida de mi amigo. Recuerdo haber trabajado con él en un auto años más tarde. Y a pesar de lo inteligente y capaz que era, lo veía temblar cada vez que tenía que poner una tuerca en un tornillo, aterrorizado de dañar la rosca. En una ocasión, mi amigo había colocado la tuerca perfectamente bien, pero tenía tanto miedo de haberla enroscado mal, que la quitó y la volvió a poner. Lo hizo una y otra vez hasta que, finalmente, terminó dañando la rosca de ese tornillo. Hasta el día de hoy, nunca lo he visto colocar una tuerca en un tornillo sin arruinar la rosca. Las palabras de su padre pintaron una imagen en su mente que limitó su capacidad.</p>
+<p>Quizá no te des cuenta, pero lo filtras todo (quién eres, qué puedes hacer, tus circunstancias e incluso cómo te han tratado) a través de tu imaginación. Y esa imaginación, si no se dirige correctamente, limita lo que Dios puede hacer en tu vida.</p>
+<p>Mi madre era maestra de escuela. Amaba la educación y siempre le daba mucha importancia a nuestros logros académicos. Cuando yo estaba en sexto grado, mi hermano tomó una prueba que clasificó su coeficiente intelectual en el nivel de genio. Al escuchar a mi madre hablar sobre sus resultados, le pregunté por mi puntaje. Me respondió que yo estaba «dos puntos por encima de un idiota». Años más tarde, se reía de aquel día diciendo: «Eso no es cierto, Andy. Seguramente estaba bromeando contigo». Pero yo nunca supe que era una broma. Sus palabras, dichas en chiste, pintaron en mi mente un cuadro de mediocridad con el que luché durante años. No fue sino hasta que el Señor me reveló la verdad sobre el espíritu, el alma y el cuerpo, que mi imaginación comenzó a cambiar.</p>
+<p>Antes de comprender el concepto de espíritu, alma y cuerpo, el reflejo en el espejo era el único «yo» que conocía. Las opiniones de los demás y mis propios sentimientos dirigían mi vida. No me daba cuenta de que mi verdadero yo —mi espíritu— era la parte de mí creada a imagen de Dios (Gén. 1:26).</p>
+<div class="verse-block">
+  <p>Y el mismo Dios de paz os santifique por completo; y ruego a Dios que todo vuestro ser, espíritu, alma y cuerpo, sea guardado irreprensible para la venida de nuestro Señor Jesucristo.</p>
+  <p class="verse-ref">1 Tesalonicenses 5:23</p>
+</div>
+<p>No podemos ver, escuchar ni sentir nuestro espíritu con los cinco sentidos naturales (1 Cor. 2:14). Solo hay una manera de comprender lo que es el espíritu: mirar en la Palabra de Dios.</p>
+<div class="verse-block">
+  <p>Porque la palabra de Dios es viva y eficaz, y más cortante que toda espada de dos filos; y penetra hasta partir el alma y el espíritu, las coyunturas y los tuétanos, y discierne los pensamientos y las intenciones del corazón.</p>
+  <p class="verse-ref">Hebreos 4:12</p>
+</div>
+<p>La Palabra de Dios nos muestra la verdad espiritual. Jesús dijo: «El espíritu es el que da vida; la carne para nada aprovecha; las palabras que yo os he hablado son espíritu y son vida» (Juan 6:63).</p>
+<p>Al comenzar a profundizar en la Palabra cuando era joven, descubrí que «el que se une al Señor, un espíritu es con él» (1 Cor. 6:17) y que «como él [Jesús] es, así somos nosotros en este mundo» (1 Juan 4:17, corchetes añadidos). Comencé a darme cuenta de que mi espíritu era idéntico al espíritu de Jesús y que yo podía hacer las mismas cosas que Él hizo (Juan 14:12). La Palabra de Dios comenzó a cambiar mi imagen interna y, a medida que esa imagen cambiaba, también lo hacía yo. En lugar de ver a un introvertido en el espejo, vi a Jesús viviendo en mí. No vi a un hombre con un poco de la naturaleza de Jesús y un poco de la mía. Vi a un hombre poseído por Dios: alguien pleno y poderoso, capaz de sanar a los enfermos, resucitar a los muertos y usar la autoridad que Cristo le había otorgado (Mar. 16:17-18).</p>
+<p>Una vez que vi esas cosas en mi imaginación, fue solo cuestión de tiempo antes de comenzar a verlas en mi vida. Desde entonces, he visto resucitar muertos, abrirse ojos ciegos y oídos sordos, personas sanadas de cáncer y a otras levantarse de sillas de ruedas. He visto toda clase de milagros. Mi propio hijo resucitó de entre los muertos. Todas estas cosas ocurrieron porque la Palabra de Dios pintó un cuadro diferente en mi imaginación.</p>
+<p>Muchas personas desean ver lo milagroso. Quieren experimentar lo mejor de Dios y verlo obrar en sus vidas, pero no se ven a sí mismas como Dios las ve. En sus mentes, se limitan a ser solamente humanos. Pasan la vida lidiando con alergias, preocupándose por la bolsa de valores y temiendo cada informe que ven en la cadena de noticias de los «diez espías». Esperan enfermarse. Esperan envejecer y perder la vista.</p>
+<p>¡Pero como creyentes, no somos solamente humanos! Nuestros cuerpos físicos pueden ser mortales, nuestras mentes aún pueden ser corruptibles, pero somos nuevas criaturas en Cristo Jesús (2 Cor. 5:17). El mismo Espíritu que levantó a Cristo de los muertos vive en nosotros. En nuestro espíritu somos puros y santos, llenos del poder de Dios. ¡Un tercio de nuestro ser es puro Espíritu Santo de pared a pared (Rom. 8:11)! Y si decidimos creerlo, nuestro espíritu dominará, superando todo lo que sucede en el ámbito físico. Pero primero necesitamos cambiar nuestra imaginación.</p>
+<p>Hace años, John G. Lake, un conocido ministro de sanidad de principios del siglo XX, relató la historia de su experiencia en Sudáfrica durante un brote de peste bubónica. La gente enfermaba y caía muerta como moscas, pero nadie quería enterrar a los fallecidos. Todos estaban aterrorizados de contraer la mortal enfermedad; todos, excepto Lake.</p>
+<p>Lake trabajó diligentemente durante la plaga, sepultando a varias personas al día, hasta que finalmente llegó un barco británico con suministros y médicos. Después de observar a Lake, uno de los doctores le preguntó cómo se había estado protegiendo de la infección. Lake respondió que la ley del Espíritu de vida en Cristo Jesús era su protección y que ningún germen se adheriría jamás a él.</p>
+<p>No muchas personas dirían eso. Simplemente no logran verlo. Pero Lake sí pudo. Cuando declaró que ningún germen podía tocar su cuerpo y sobrevivir, los doctores se rieron. No le creyeron. Así que Lake propuso una prueba. Le pidió a un médico que recolectara saliva de uno de los muertos y la pusiera bajo el microscopio. Como era de esperar, gérmenes vivos cubrían el portaobjetos. Lake sugirió que pusieran esos gérmenes en sus manos y volvieran a observar. Los doctores lo hicieron, y lo que vieron los dejó atónitos. ¡Cuando los gérmenes tocaron la piel de Lake, murieron!</p>
+<div class="verse-block">
+  <p>No te sobrevendrá mal, ni plaga tocará tu morada.</p>
+  <p class="verse-ref">Salmo 91:10</p>
+</div>
+<p>Cualquiera que crea en las promesas del Salmo 91 y las confiese con fe (Sal. 91:2) puede tener la misma protección contra las plagas que tuvo John G. Lake. Sin embargo, la mayoría de los cristianos nunca experimentan este tipo de resultados, porque se dejan impresionar más por lo que escuchan en las noticias que por lo que escuchan desde el púlpito. Los conmueve más lo que dice su médico que lo que dice Dios. En lugar de que su imagen interior provenga de la luz de la Palabra de Dios, proviene del resplandor de un televisor. La mayoría de los cristianos se limitan a la experiencia del mundo. No permiten que la Palabra de Dios cambie su imaginación.</p>
+<p>Cuando el Señor me habló en 2002 (poco después de los ataques terroristas a las Torres Gemelas) y me dijo que lo estaba limitando, reuní a mi personal y les dije: «No sé cuánto tiempo tome cambiar esta imagen en mi interior, pero voy a cambiar. Voy a hacer lo que Dios me llamó a hacer». Aunque todo en lo natural gritaba que expandirse durante una época así era imposible, me sorprendió lo rápido que nuestro ministerio comenzó a prosperar.</p>
+<p>Durante ese tiempo, nadie veía la televisión cristiana. Nadie estaba donando a los ministerios cristianos. La atención de todos estaba cautivada por las noticias. Todos los ministerios televisivos que conocía sufrieron. Los ministerios paraeclesiásticos recortaron drásticamente sus presupuestos. Entonces, sin previo aviso —antes de que pudiera enviarle siquiera un comunicado a mis colaboradores, antes de que pudiera hacer cualquier otra cosa más que cambiar mi imaginación—, nuestros ingresos se duplicaron. Fue como si en el ámbito espiritual hubiera una represa reteniendo todas las bendiciones que Dios quería hacerme llegar. Dios estaba proveyendo. Él estaba cumpliendo fielmente su Palabra. Pero algo había obstruido el flujo. Cuando encendí mi imaginación y cambié mi imagen interna, esa represa se rompió. Y tal como promete Deuteronomio 28:2, una inundación de la provisión de Dios me alcanzó.</p>
+<p>Puedes leer más acerca de mi experiencia personal sobre cómo cambié mi imaginación en mi libro No limite a Dios.</p>
+</div>`
+  },
+  {
+    section: 'Capítulo 3', title: 'Un enfoque absoluto',
+    html: `<div class="body-text">
+<p>Este concepto de la imaginación no debería ser territorio desconocido para los cristianos. Lidiamos constantemente con «cosas que no se ven». Creemos en un Dios y en un cielo que nunca hemos visto. Apostamos nuestra eternidad a las palabras de un libro antiguo. ¡Y creemos que un Hombre al que nunca hemos conocido pagó el precio de nuestros pecados dos mil años antes de que siquiera naciéramos! Para la mente natural, esto suena a locura; sin embargo, es la verdad.</p>
+<p>Hace poco estaba escuchando la radio y oí al presentador de un programa debatir un tema moral con su audiencia. Uno de los oyentes llamó para refutar lo que se estaba diciendo. «La Biblia dice...», comenzó el oyente, pero el presentador lo interrumpió de inmediato: «Aquí no nos basamos en la Biblia. Nos basamos en la realidad. No queremos ideas ni creencias. Queremos la realidad». Me enojé tanto que empecé a gritarle a la radio: «¡La Biblia es más real que cualquier cosa que puedas ver, saborear, escuchar, oler o tocar!». El mundo físico, lo que la mayoría de la gente llama «realidad», fue creado por el mundo espiritual. Hebreos lo explica así:</p>
+<div class="verse-block">
+  <p>Por la fe entendemos que el universo fue formado por la palabra de Dios, de modo que lo que se ve no fue hecho de cosas visibles.</p>
+  <p class="verse-ref">Hebreos 11:3</p>
+</div>
+<p>La Palabra de Dios creó todo lo que podemos ver con nuestros ojos físicos. La Palabra es real, pero no es una realidad que se pueda experimentar con los sentidos naturales (1 Cor. 2:14). No se puede ver con los ojos ni tocar con las manos. Al igual que el resto del mundo espiritual, debe experimentarse por fe.</p>
+<p>Durante la «Gran Recesión» de 2008, cuando los precios de las acciones cayeron un cincuenta por ciento y el mercado inmobiliario se desplomó, el Señor me habló de construir un campus de nivel mundial para el instituto bíblico Charis. Desde entonces, adquirimos y comenzamos a urbanizar 493 acres de terreno montañoso virgen en Woodland Park, Colorado. Hemos invertido más de 70 millones de dólares —por encima de mis gastos habituales— en la construcción de un edificio de 70 000 pies cuadrados llamado The Barn para albergar nuestras aulas de Charis, y un edificio de 140 000 pies cuadrados que incluye un auditorio con capacidad para 3200 personas, nuestro centro de atención telefónica y las oficinas de Charis. Además, renovamos otro edificio de 60 000 pies cuadrados en la misma propiedad para nuestras oficinas de AWM y el estudio de televisión. Todo esto se logró sin contraer un solo centavo de deuda.</p>
+<p>Mientras todos los demás pasaban apuros y apenas sobrevivían durante la «Gran Recesión», nosotros prosperábamos. Estábamos construyendo. No hay una explicación natural para esto. No pedimos un préstamo ni recurrimos a fondos de inversionistas. Tampoco teníamos una enorme cantidad de ahorros de los cuales echar mano. Lo único que teníamos era la Palabra de Dios. Dejamos que la Palabra pintara un cuadro de lo que era posible, de lo que podíamos hacer, y esa imagen se ha vuelto tan clara y tan fuerte que ya no podemos vivir fuera de ella. ¡Nos hemos vuelto de una mentalidad tan exclusiva en nuestra búsqueda de la voluntad de Dios!</p>
+<p>Verás, la fe y la imaginación trabajan de la mano. Puedes llegar a enfocarte tanto, a tener un enfoque tan absoluto en las Escrituras, que no logras ver nada que sea contrario a ellas. ¡Y eso es algo muy positivo!</p>
+<p>Hace años, mi junta directiva me envió al médico para hacerme una prueba de esfuerzo (la póliza de seguro que estábamos solicitando así lo exigía). Mientras el médico comenzaba a prepararme para la caminadora, su enfermera me preguntó si me podían rasurar el vello del pecho para que los electrodos pudieran adherirse. «No pueden rasurarme el pecho», le dije. «Este es vello virgen. ¡Nadie lo ha tocado nunca!». Respetaron mi petición e intentaron pegar esas cosas a mi pecho sin rasurarlo, pero a los trece minutos de iniciada la prueba, comenzaron a caerse. Para poder terminar, tuve que sostener dos electrodos en su lugar, la enfermera sostuvo otros dos y el médico sostuvo un par más. Cuando terminé de correr, el doctor revisó mis resultados. Luego empezó a gruñir y a hacer anotaciones en mi historial médico. Cuando por fin levantó la vista, me dijo: «Aquí tiene el nombre de un médico que conozco. Es especialista. Quiero que vaya allí y se haga unas pruebas de inmediato. Es posible que tengamos que ingresarlo al hospital para hacerle una cirugía a corazón abierto antes de que termine el día».</p>
+<p>¡Me quedé estupefacto! No me sentía enfermo. La única razón por la que había ido al médico era por la póliza de seguro. ¿Cómo era posible que necesitara una cirugía a corazón abierto? Mientras me quedaba allí sentado un segundo mirando al doctor, comencé a pensar en la imagen de salud y fortaleza que la Palabra de Dios había pintado en mi interior. Y le respondí: «Eso es mentira. No lo creo. Vuelva a mirar esos resultados y dígame si ahí dice que tengo un problema cardíaco».</p>
+<p>El médico se limitó a mirarme (supongo que no estaba acostumbrado a que lo llamaran mentiroso) y dijo: «Bueno, en realidad no dice que usted tenga un problema en el corazón. Solo dice que hubo una anomalía durante la prueba. Puede que no sea nada, pero podría ser algo grave. Necesitamos hacerle más estudios». ¡El muy insensato no se detuvo a pensar en el hecho de que esos electrodos se me estaban cayendo del pecho! «Eso no fue lo que me dijo», le repliqué, ya enojado. «Usted me dijo que tal vez tendrían que operarme a corazón abierto antes de que terminara el día. ¡Usted me mintió!».</p>
+<p>«Bien», contestó, rompiendo el papel. «Arréglatelas como puedas; lárgate de aquí».</p>
+<p>Más tarde ese mismo día, de camino a casa, el auto de una mujer se averió. Estaba bloqueando la calle, así que me bajé y lo empujé hasta la zona para estacionar más cercana. Lo empujé cuesta arriba y a la vuelta de la esquina, yo solo. ¡Nada mal para un sujeto al que supuestamente iban a hacerle una cirugía a corazón abierto ese mismo día!</p>
+<p>Mi punto es que la Palabra de Dios tiene el poder de cambiar lo que ves. Mi padre murió cuando yo tenía doce años. Sufría de problemas cardíacos. De hecho, murió dos veces: una en 1952 y de nuevo en 1962. La primera vez que falleció, el hospital lo declaró muerto, lo cubrieron con una sábana y lo dejaron en una camilla en el pasillo. Eran cerca de las dos de la madrugada. En casa, nuestro pastor estaba dirigiendo una vigilia de oración clamando por él. En el mismo instante en que el camillero llegó para llevar a mi padre a la morgue, nuestro pastor se puso de pie en casa y dijo: «O Dios ha hecho lo que dijo y lo ha sanado, o está muerto. De cualquier manera, ya terminé de orar; me voy a casa». Lo siguiente que todos supieron fue que mi padre resucitó de entre los muertos. ¡Pateó la sábana a un lado y el camillero se orinó en los pantalones en medio del pasillo del hospital! Debido al historial cardíaco de mi padre, cada vez que voy a hacerme un chequeo, los médicos empiezan a proyectar sus problemas en mí.</p>
+<p>Yo podría comportarme como el resto del mundo y darle peso a esas palabras. Podría permitir que el diagnóstico de los médicos me intimide e influya en la manera en que me veo a mí mismo. En lugar de eso, me mantengo firme en la Palabra de Dios, la cual afirma que Jesús compró mi sanidad en el Calvario (1 Ped. 2:24). Confío en que la Palabra de Dios es perfecta, que Él es «escudo a los que en él esperan» (Prov. 30:5) y que ninguna plaga tocará mi morada (Sal. 91:10). Creo que «el gozo del SEÑOR es [mi] fortaleza» (Neh. 8:10, corchetes añadidos). Me animo a mí mismo con ejemplos bíblicos como el de Moisés, quien, el día que murió a los 120 años de edad, subió al monte Nebo. La Biblia dice que «sus ojos nunca se oscurecieron, ni perdió su vigor» (Deut. 34:7). Rompo la maldición de los médicos diciendo: «El cincuenta por ciento de mi genética proviene de mi madre. Ella vivió hasta los noventa y seis años y estaba más sana que un roble. ¿Por qué no se fijan en el historial de su lado de la familia?». Al momento de escribir esto, ya he superado en más de quince años la edad a la que murió mi padre. Y según mi última prueba de esfuerzo nuclear, ¡tengo el corazón de un adolescente!</p>
+<p>Después de que aquel doctor en Colorado Springs me reprobara, mi amigo (un médico que forma parte de mi junta directiva) me invitó a su clínica en Luisiana para hacerme una prueba de esfuerzo nuclear. Me dijo: «Esas pruebas en la caminadora se equivocan la mitad de las veces. Nunca bases una decisión de salud en uno de esos exámenes». Así que me inyectaron una especie de líquido de contraste y tomaron imágenes de mi corazón en reposo y después de hacer ejercicio. Mi amigo me dio el veredicto: «No tienes absolutamente nada. Tienes el corazón de un joven de diecisiete años».</p>
+<p>Hermanos y hermanas, ¡no tienen que permitir que sus genes, su nivel de educación o su pasado dicten su futuro! Dense permiso para desarrollar este tipo de enfoque radical fundamentado en la Palabra. Cambien su imaginación.</p>
+</div>`
+  },
+  {
+    section: 'Capítulo 4', title: 'Desarrollando una imagen',
+    html: `<div class="body-text">
+<div class="verse-block">
+  <p>No os conforméis a este siglo, sino transformaos por medio de la renovación de vuestro entendimiento, para que comprobéis cuál sea la buena voluntad de Dios, agradable y perfecta.</p>
+  <p class="verse-ref">Romanos 12:2</p>
+</div>
+<p>Desarrollar una imaginación positiva y alineada con Dios es una parte enorme de la renovación de la mente, y a menudo es la parte que hace tropezar a las personas. Aunque el concepto es sencillo, toma tiempo que baje al corazón. No existe una «solución rápida» para tu imaginación. Una imaginación conforme a la voluntad de Dios no se puede impartir mediante la imposición de manos. Tienes que desearlo. Cambiar tu forma de pensar y de ver las cosas es un proceso; requiere tiempo y constancia. Llevo décadas trabajando en ello, y aunque ciertamente no he llegado a la meta, ¡gracias a Dios ya arranqué!</p>
+<p>Hace años, decidí que no quería vivir mi vida como los diez espías que fueron con Josué y Caleb a explorar la Tierra Prometida. En el libro de Números, antes de que los hijos de Israel entraran en Canaán, Moisés envió representantes de cada tribu a reconocer el terreno. Les pidió específicamente que investigaran la topografía y la fertilidad de la tierra, el tipo de personas que vivían allí, así como el tamaño y la fortaleza de sus ciudades (Núm. 13:17-20). Cuando los espías regresaron, trajeron consigo evidencia de la provisión de Dios: ¡un racimo de uvas tan enorme que tuvo que ser transportado entre dos hombres! Pero también trajeron este reporte:</p>
+<div class="verse-block">
+  <p>Y le contaron, diciendo: Nosotros llegamos a la tierra a la cual nos enviaste, la que ciertamente fluye leche y miel; y este es el fruto de ella. Mas el pueblo que habita aquella tierra es fuerte, y las ciudades muy grandes y fortificadas; y también vimos allí a los hijos de Anac.</p>
+  <p class="verse-ref">Números 13:27-28</p>
+</div>
+<p>Canaán era una tierra abundante, mucho más de lo que los hijos de Israel habían soñado que fuera posible. Pero en lugar de creer en la Palabra de Dios, dejaron que las circunstancias los desviaran de su rumbo. Aunque Caleb intentó animarlos, el pueblo no logró ver más allá de los gigantes:</p>
+<div class="verse-block">
+  <p>Mas los varones que subieron con él, dijeron: No podremos subir contra aquel pueblo, porque es más fuerte que nosotros. Y hablaron mal entre los hijos de Israel, de la tierra que habían reconocido, diciendo: La tierra por donde pasamos para reconocerla, es tierra que traga a sus moradores; y todo el pueblo que vimos en medio de ella son hombres de grande estatura. También vimos allí gigantes, hijos de Anac, raza de los gigantes, y éramos nosotros, a nuestro parecer, como langostas; y así les parecíamos a ellos.</p>
+  <p class="verse-ref">Números 13:31-33</p>
+</div>
+<p>El hecho de que hubiera gigantes en la tierra de Canaán no anulaba la capacidad de los israelitas para conquistarla. Su imaginación fue lo que les impidió heredar la promesa de Dios. Permitieron que las palabras de diez hombres («éramos nosotros, a nuestro parecer, como langostas») cambiaran la manera en que se veían a sí mismos y limitaran cuánto de la voluntad de Dios podrían cumplir.</p>
+<p>Cuarenta años después, cuando Josué envió a dos espías a Jericó, descubrieron que el corazón de los cananeos se había derretido y que su valor los había abandonado el mismo día que se enteraron del cruce milagroso de los israelitas por el mar Rojo (Jos. 2:9-11). Si los israelitas hubieran invadido en aquel entonces, habría sido un paseo por el parque. La fuerza de su enemigo se había esfumado. En lugar de eso, los israelitas fueron derrotados en su imaginación. Se vieron a sí mismos como langostas (Núm. 13:33). Ese fue el problema.</p>
+<p>Años más tarde, cuando David peleó contra Goliat, tuvo la misma oportunidad de ser derrotado por su imaginación. Y tal como había ocurrido antes, esta batalla entre Israel y los gigantes de la tierra no iba a ser una pelea justa. ¡Pero esta vez, el resultado fue diferente!</p>
+<div class="verse-block">
+  <p>Mientras [David] hablaba con [sus hermanos], he aquí que aquel paladín que se ponía en medio de los dos campamentos, que se llamaba Goliat, el filisteo de Gat, salió de entre las filas de los filisteos y habló las mismas palabras, y las oyó David. Y todos los varones de Israel que veían a aquel hombre huían de su presencia, y tenían gran temor.</p>
+  <p class="verse-ref">1 Samuel 17:23-24, corchetes añadidos</p>
+</div>
+<div class="verse-block">
+  <p>Entonces habló David a los que estaban junto a él, diciendo: ¿Qué harán al hombre que venciere a este filisteo, y quitare el oprobio de Israel? Porque ¿quién es este filisteo incircunciso, para que provoque a los escuadrones del Dios viviente?</p>
+  <p class="verse-ref">1 Samuel 17:26, énfasis añadido</p>
+</div>
+<p>En lugar de verse a sí mismo como una langosta, David se vio a sí mismo en función de su pacto con Dios. Sabía que Goliat, un hombre ajeno a ese pacto, no tenía ninguna oportunidad.</p>
+<p>Así es como deberíamos ser nosotros. Cuando el cáncer, la pobreza o el miedo llaman a la puerta, nuestra fe debería gritar: «¿Quién te crees que eres para venir contra mí, un hijo del Altísimo? Voy a destruirte y a refregar tu nariz en la derrota. ¡Te arrepentirás del día en que te metiste conmigo!».</p>
+<p>Desafortunadamente, la mayoría de nosotros no nos atreveríamos a hablar así. No nos vemos como nos describe la Palabra ni como Dios nos ve. Esa es la razón por la que estamos estancados bajo las circunstancias. Nos vemos a nosotros mismos como langostas: pequeños, débiles y pobres. Nos vemos como víctimas. ¡Pero no somos víctimas! ¡El Dios Todopoderoso vive en nosotros! Deberíamos esperar resultados diferentes.</p>
+<p>Cuando de niño leí la historia de David y Goliat, mucho antes de comprender la importancia de la imaginación, recuerdo haber salido al jardín de atrás y haber marcado en un árbol la altura que tenía Goliat. Hice otra marca a la altura de David y me agaché intentando imaginar la batalla desde su perspectiva. Años más tarde, durante una visita de Jamie y mía a Israel, nuestro autobús turístico se detuvo en el valle de Ela, donde David luchó contra Goliat. Hacía un día caluroso, pero nuestro guía nos indicó dónde estábamos y preguntó si alguien quería bajar. Nadie quiso. Todos querían quedarse en el autobús con aire acondicionado; todos, excepto yo. Afortunadamente, el resto de nuestro grupo tuvo la gentileza de dejarme ir a explorar, así que me bajé del autobús y caminé hacia el valle. El valle de Ela tiene unas cuatro millas de ancho. Bajé hasta el lecho seco de un arroyo que atravesaba el centro del valle y recogí cinco piedras lisas. De pie allí, contemplando las colinas, me imaginé a los filisteos posicionados a un lado y a los israelitas al otro. Vi a Goliat de pie en la cresta de la colina y me imaginé a David acercándose por detrás de sus hermanos mientras Goliat gritaba: «¿No hay un hombre que pelee conmigo?». Observé a los israelitas encogerse de miedo, y sentí la justa indignación de David. Toda la historia cobró vida ese día, reproduciéndose en aquellas colinas, no porque pudiera verla con mis ojos físicos, sino porque la experimenté en mi imaginación. Verás, no hay una unción especial en Tierra Santa. La gente siente que la Biblia cobra vida cuando visita ese lugar porque, por primera vez, le permiten a su imaginación «ver» lo que solo habían leído. Ver con tus ojos lo que únicamente has leído ayuda a que tu imaginación vea con mayor claridad. Por eso es tan especial visitar Tierra Santa.</p>
+<p>¿Alguna vez has intentado armar algo usando únicamente las palabras de un manual de instrucciones? Tal vez leas: «Una el lado A al lado B usando las clavijas F y G», pero lo más probable es que tengas que mirar el diagrama incluido para descifrar de qué hablan las instrucciones. Esta es la razón por la que la gente dice que una imagen vale más que mil palabras y por la que los constructores usan planos. Cuando estábamos construyendo el campus de Charis en Woodland Park, recuerdo haberme sentado con los arquitectos a explicarles lo que quería ver. Pero cuando lo dibujaron, no era lo que yo me había imaginado. «No», les decía, «no quiero eso. Quiero esto». Y volvían a la mesa de dibujo. Nos tomó algo de tiempo, pero seguimos trabajando en ello hasta que todos pudimos ver lo mismo.</p>
+<p>Un constructor jamás intentaría levantar una casa explicándoles verbalmente la distribución a sus trabajadores. Si ese fuera el único método que usara para describir el diseño y la función de una casa, ¡el propietario podría terminar con un tomacorriente dentro de la bañera!</p>
+<p>Pero, en cierto sentido, eso es exactamente lo que hacemos con la Palabra de Dios.</p>
+<p>Una de las principales razones por las que las personas no ven que la Palabra obre en su vida es porque se limitan a leerla. No puedes simplemente leer la Palabra y esperar que produzca un cambio. Tienes que permitir que esa Palabra avive tu imaginación hasta que «veas» lo que estás leyendo. Incluso si pasas horas cada semana leyendo la Biblia o citando escrituras sobre sanidad, no verás la plenitud de esas palabras hacerse realidad en tu vida hasta que te imagines a ti mismo sano. De hecho, te iría mejor leyendo un solo versículo sobre la sanidad y dejando que la verdad que contiene pinte un cuadro de quién eres, que leer cinco capítulos en tu plan de «Lee la Biblia en un año» y ni siquiera recordar qué libro de la Biblia leíste. Si te tomaras el tiempo de usar tu imaginación para verte a ti mismo a través de los ojos de tu pacto con Dios, tal como lo hizo David, ¡tú también podrías derribar gigantes!</p>
+</div>`
+  },
+  {
+    section: 'Capítulo 5', title: 'Más que solo teoría',
+    html: `<div class="body-text">
+<p>Deberíamos estar experimentando la vida a un nivel diferente que el de nuestros vecinos no salvos. En Juan 14:12, Jesús dijo: «De cierto, de cierto os digo: El que en mí cree, las obras que yo hago, él las hará también». «De cierto» es una expresión antigua en español que significa «en verdad» o «verdaderamente». Por supuesto, todo lo que Jesús decía era verdad, y Él nunca desperdiciaba palabras. Así que, cada vez que Jesús decía: «De cierto, de cierto», lo hacía a propósito. Quería dejar sumamente claro que hablaba en serio.</p>
+<div class="verse-block">
+  <p>De cierto, de cierto os digo: El que en mí cree, las obras que yo hago, él las hará también; y aun mayores hará, porque yo voy al Padre.</p>
+  <p class="verse-ref">Juan 14:12</p>
+</div>
+<p>Cuando comencé a meditar en este pasaje, repasé cada uno de los milagros de Jesús, diciendo: «Señor, Tú dijiste que yo podría hacer las mismas obras que Tú hiciste. Tú sanaste a los enfermos. Por lo tanto, yo voy a sanar a los enfermos». Comencé a imaginarme tocando al ciego Bartimeo, encontrándome con los diez leprosos y sanando a la mujer con el flujo de sangre, tal como lo hizo Jesús. Luego llegué a la resurrección de los muertos, y mi imaginación titubeó.</p>
+<p>Nuevamente dije: «Señor, Tú dijiste que yo podría hacer las mismas obras que Tú hiciste. Tú resucitaste a los muertos. Por lo tanto, yo voy a resucitar a los muertos». Estudié cada caso bíblico en el que alguien fue levantado de entre los muertos y comencé a imaginar. Escribí las historias y las repasé en mi mente. Pero en lugar de solo ver a Jesús resucitar a Lázaro, lo personalicé. Me vi a mí mismo resucitando a Lázaro. Me vi de pie frente a la tumba gritando: «¡Lázaro, sal fuera!».</p>
+<p>Quizá pienses que estoy loco, pero al poco tiempo, empecé a soñar que resucitaba a personas de entre los muertos. Cada noche le devolvía la vida a veinte o treinta personas. Se volvió algo tan común que me costaba distinguir cuándo estaba despierto y cuándo estaba dormido. Entonces, un día —mientras estaba definitivamente despierto— un hombre murió en una de mis reuniones. Sin pensarlo demasiado, le ordené a ese hombre que volviera a la vida y lo vi resucitar de entre los muertos. Las palabras de Jesús se habían convertido en parte de mí, y ese hombre volvió a la vida.</p>
+<p>El uso correcto de la imaginación debería ser algo que todo creyente cultive. Sin embargo, me atrevería a decir que la mayoría de las personas que leen este libro nunca han estudiado sobre la imaginación. Simplemente no han pensado en ello. Tal vez les parezca un poco extraño, un poco infantil. Pero Jesús dijo: «El que no reciba el reino de Dios como un niño, no entrará en él» (Mar. 10:15).</p>
+<p>Todo el mundo usa su imaginación. Pero lamentablemente, por defecto, la mayoría de la gente la usa para cosas negativas en lugar de positivas. Por ejemplo, si sufres de depresión, significa que simplemente no estás controlando tu imaginación. Tus pensamientos están produciendo imágenes de fracaso que dicen: Nunca daré la talla. Las cosas nunca cambiarán. Es inútil intentarlo. Y aunque quizá sepas que esas cosas no son ciertas, tus emociones están firmemente atrincheradas en el asiento del conductor de tu vida, y se sienten ciertas.</p>
+<p>En 1 Reyes 19, Elías se encontraba en la misma situación. Acababa de hacer descender fuego del cielo, matar a 850 profetas falsos, anunciar el fin de una sequía de tres años y dejar atrás a un carruaje corriendo (1 Rey. 18). (¡Creo que a eso yo le llamaría un día exitoso!). Pero cuando Jezabel se enteró de sus hazañas y amenazó con matarlo (1 Rey. 19:1-2), Elías se derrumbó. Aterrorizado, huyó hacia el desierto:</p>
+<div class="verse-block">
+  <p>Viendo, pues, el peligro, se levantó y se fue para salvar su vida.</p>
+  <p class="verse-ref">1 Reyes 19:3</p>
+</div>
+<p>Elías huyó cuando «vio» el peligro. ¿Qué fue lo que vio? El versículo anterior nos da una pista:</p>
+<div class="verse-block">
+  <p>Entonces envió Jezabel a Elías un mensajero, diciendo: Así me hagan los dioses, y aun me añadan, si mañana a estas horas yo no he puesto tu persona como la de uno de ellos.</p>
+  <p class="verse-ref">1 Reyes 19:2</p>
+</div>
+<p>Elías se vio a sí mismo muerto, tal como Jezabel lo describió, y huyó para salvar su vida. La manera en que nos vemos por dentro dicta nuestras respuestas.</p>
+<div class="verse-block">
+  <p>Y él se fue por el desierto un día de camino, y vino y se sentó debajo de un enebro; y deseando morirse, dijo: Basta ya, oh SEÑOR, quítame la vida, pues no soy yo mejor que mis padres.</p>
+  <p class="verse-ref">1 Reyes 19:4</p>
+</div>
+<div class="verse-block">
+  <p>Y allí se metió en una cueva, donde pasó la noche. Y vino a él palabra del SEÑOR, el cual le dijo: ¿Qué haces aquí, Elías? Él respondió: He sentido un vivo celo por el SEÑOR Dios de los ejércitos; porque los hijos de Israel han dejado tu pacto, han derribado tus altares, y han matado a espada a tus profetas; y sólo yo he quedado, y me buscan para quitarme la vida.</p>
+  <p class="verse-ref">1 Reyes 19:9-10</p>
+</div>
+<p>La imaginación de Elías estaba fuera de control. Acababa de ejecutar a 850 falsos profetas de Baal, lo cual estoy seguro de que fue una escena espantosa. Probablemente aún podía escuchar sus gritos y oler su sangre. Cuando Jezabel amenazó con hacerle lo mismo a él, supongo que a la imaginación de Elías le resultó fácil sobreponer su propio rostro en uno de los cuerpos que acababa de ver (1 Rey. 19:2). Pero en lugar de llevar cautivo ese pensamiento (2 Cor. 10:5), Elías se revolcó en él.</p>
+<p>«¡Solo yo he quedado!», clamó cuando Dios le preguntó qué hacía escondido en el desierto. Por supuesto, Elías sabía que eso no era verdad. Abdías le acababa de hablar de los cien profetas que había escondido de Jezabel (1 Rey. 18:13). Pero no importaba lo que Elías supiera; se sentía solo. Esos sentimientos impulsaron sus palabras y sus decisiones.</p>
+<p>Tal vez hayas estado allí. Tal vez estés allí ahora mismo. Sabes que no es el fin del mundo, pero así se siente. Y en lugar de controlar tu imaginación, estás permitiendo que tus pensamientos maten tu visión para el futuro.</p>
+<p>Doce años después de que aquel hombre resucitara en mi reunión, comencé a pensar: Ha pasado un tiempo desde la última vez que resucité a alguien de entre los muertos. Voy a hacerlo de nuevo. Y al igual que antes, comencé a meditar. Volví a repasar los ejemplos de Jesús. Repasé los de Pedro y los de Pablo. Comencé a imaginarme resucitando a personas de entre los muertos, y pronto empecé a soñar otra vez. Entonces, sin previo aviso, Jamie y yo recibimos una llamada. Nuestro hijo había muerto.</p>
+<p>Mientras nos preparábamos para conducir hacia la ciudad, Jamie y yo experimentamos el dolor que cualquier padre sentiría. Pero en lugar de pensar en nuestra pérdida, comenzamos a alabar a Dios y a darle gracias por su bondad. Recordamos las profecías que habíamos recibido acerca de nuestro hijo años atrás, y la fe se levantó dentro de nosotros. Para cuando llegamos al hospital, nuestro hijo llevaba cinco horas muerto. Lo habían desnudado, estaba sobre una plancha en la morgue y tenía una etiqueta en el dedo del pie, cuando de repente se sentó y empezó a hablar.</p>
+<p>Desde entonces, más de cuarenta personas han resucitado a través de nuestro ministerio. Constantemente recibimos reportes de los milagros que ven los estudiantes de nuestro instituto bíblico en el campo misionero. La gente es salva. Se abren ojos ciegos. Los sordos oyen. No hace mucho, un equipo de estudiantes oró por un hombre en Nicaragua. Los paramédicos ya lo habían dado por muerto, pero estos estudiantes lo resucitaron. Durante ese mismo año, un bebé fue resucitado en Ecuador a través de un grupo diferente de estudiantes. ¡Fue increíble!</p>
+<p>¿A quién no le gustaría ver esta clase de milagros? ¿A quién no le gustaría ver a su hijo resucitado de entre los muertos? ¿A quién no le gustaría ver a un familiar sanado de cáncer? Cuando el mundo entero está sufriendo, arruinado y asustado, ¿a quién no le gustaría tener salud, prosperidad y paz? Todo el mundo quiere eso. Estoy seguro de que muchos incluso oran por ello. Pero no muchos están dispuestos a hacer lo necesario para ver que la Palabra obre de esa manera.</p>
+<p>Dos estudiantes de nuestro instituto bíblico en Atlanta me escucharon enseñar sobre esto y comenzaron a trabajar en su imaginación. Cuando a un miembro de su familia le diagnosticaron una enfermedad incurable y le dieron solo unos pocos días de vida, ¡estas dos mujeres se levantaron, declararon la Palabra de Dios y su familiar fue sanado! Otra mujer que luchaba contra el cáncer se aferró a esta enseñanza y, en cuestión de veinticuatro horas, estaba viéndola obrar en su vida. Había estado en tratamientos de radiación y parecía una bola de billar. Perdió hasta el último cabello de la cabeza. ¡Veinticuatro horas después de que oramos, el cabello le había crecido casi media pulgada!</p>
+<p>Hermanos y hermanas, existe una relación directa entre cómo usan su imaginación y lo que pueden recibir de Dios. Sinceramente, no es tan difícil conseguir que el cuerpo sane. Dios creó nuestros cuerpos para sanarse a sí mismos. La parte difícil es lograr que la imaginación funcione correctamente.</p>
+<p>Si yo hubiera pasado la vida tratando de recibir de Dios en función de la manera en que los demás me veían, o basado en aquella vieja imagen interna de un pueblerino introvertido de Texas, les aseguro que no estarían leyendo este libro. Nunca lo habría escrito. Jamás habrían oído hablar de mí. Pero permití que la Palabra de Dios cambiara la manera en que me veo a mí mismo. Permití que ella definiera lo que puedo hacer. Ahora estoy viendo en mí la vida abundante que Jesús proveyó (Juan 10:10). Estoy haciendo las «obras mayores» (Juan 14:12), pero solo desde que rendí mi imaginación al Señor.</p>
+</div>`
+  },
+  {
+    section: 'Reflexión', title: 'Reflexión',
+    html: `<div class="body-text">
+<div class="verse-block">
+  <p>He aquí, yo estoy a la puerta y llamo; si alguno oye mi voz y abre la puerta, entraré a él, y cenaré con él y él conmigo.</p>
+  <p class="verse-ref">Apocalipsis 3:20</p>
+</div>
+<p>Es tiempo de tomar acción, de ser intencionales y abrir la puerta de nuestra voluntad al Señor para que tome el control de absolutamente todo lo que somos. Oír su voz y abrir la puerta de nuestra alma —mente, voluntad y emociones— es darle acceso completo. ¿Te has hecho estas preguntas?: ¿has rendido tu imaginación al Señor? O, cuando te sientes abrumado, ¿piensas: «Este pensamiento que tengo ahora, ¿dónde está en la Palabra de Dios?»? ¿Me veo constantemente en Cristo, completamente unido a Él en su muerte y resurrección?</p>
+<p>Moisés comenzó su ministerio a los ochenta años y, ciertamente, el Señor se encargó de grabar en su corazón imágenes como la zarza ardiente para que nunca olvidara sus palabras: «YO SOY EL QUE SOY» (Éxodo 3:14). Créeme cuando te digo que ninguna de las palabras del Dios del universo volverá a Él vacía; son Espíritu y vida que penetraron e hicieron una profunda impresión en todo el ser de Moisés para impulsarlo a guiar al pueblo de Israel de vuelta a la casa de su Padre.</p>
+<p>Y si eso sucedió en el antiguo pacto, ¿cómo crees que será para nosotros hoy, que vivimos bajo un nuevo pacto con mejores promesas? La Escritura lo confirma:</p>
+<div class="verse-block">
+  <p>Pero ahora Él ha obtenido un ministerio tanto mejor, por cuanto es también el mediador de un mejor pacto, establecido sobre mejores promesas. Pues si aquel primer pacto hubiera sido sin defecto, no se hubiera buscado lugar para el segundo.</p>
+  <p class="verse-ref">Hebreos 8:6-7</p>
+</div>
+<p>Ahora Dios mismo vive dentro de nosotros, nos habita. Porque al recibir al Hijo, a todos los que le recibieron les dio la potestad de ser hechos hijos de Dios.</p>
+<p>Pero Dios no hará nada que tú no desees. Es necesario que esta rendición nazca de tu corazón, es necesario que abras la puerta, y puedes empezar con una sencilla oración al Señor:</p>
+<div class="prayer-block">
+«Padre, me presento ante ti. Hoy quiero abrir la puerta de mi corazón —mi voluntad— y permitirte que entres y tomes el control absoluto de mi imaginación. Te entrego todos los años de mi vida en que mi mente le sirvió al pecado como el esclavo que fui, creando en mí patrones de pensamiento que no están de acuerdo con tu Palabra. Pero hoy confieso con mi boca que ya no vivo yo, Cristo vive en mí.
+<br><br>
+Eres el Señor de mi vida y también de mi imaginación; esta ya no le sirve al pecado, porque me considero muerto. Me veo con los ojos de mi hombre interior —mi imaginación— muerto a esa esclavitud que me hizo tanto daño. Pongo la imaginación de mi vieja naturaleza sobre la cruz del Calvario y creo que la muerte de Jesús es mi muerte. Ahora recibo tu naturaleza divina, y esa vida increada de Dios toma el control absoluto. Recibo una imaginación redimida por la sangre del Cordero; soy una nueva criatura, hecha para pensar bien, sentir bien y desear de acuerdo con tu voluntad. Sé que, al hacerlo, traeré el reino de los cielos a la tierra, trayendo gozo a tu corazón, Padre.
+<br><br>
+Espíritu Santo, te doy todo el permiso para que imprimas nuevas imágenes, nuevas visiones, sueños y palabras que me llevarán a ser —por tu gracia— el instrumento que tú quieres que yo sea. Hoy renuncio a una mentalidad estrecha. Llevo a la cruz toda mentalidad de pobreza, de ruina, de escasez y de enfermedad; renuncio a verme fracasado, sin esperanza, tan solo sobreviviendo; renuncio a compararme con los demás, renuncio a competir con los demás, renuncio a envidiar a los demás. A cambio, recibo la mente de Cristo, una mente amplia, que piensa como piensa mi Padre en los cielos, porque soy lo que soy por la gracia de Dios.
+<br><br>
+Hoy creo que nacen nuevos caminos en mi cerebro, nuevas formas de pensar dadas por el Espíritu que me habita. Y confío en que el que empezó la buena obra la perfeccionará día tras día hasta tu regreso. Seré hallado irreprensible en mi espíritu, mi alma y mi cuerpo. ¡Señor, me hallarás pensando bien! Todo esto lo pido en el Nombre que es sobre todo nombre, en los cielos, en la tierra y debajo de la tierra: ¡JESUCRISTO, NUESTRO SEÑOR! ¡Amén!»
+</div>
+</div>`
+  }
+];
+
+let cur = 0, fs = 22, tocOpen = false;
+const screen    = document.getElementById('screen');
+const content   = document.getElementById('content');
+const progFill  = document.getElementById('prog-fill');
+const progLabel = document.getElementById('prog-label');
+const prevBtn   = document.getElementById('prev-btn');
+const nextBtn   = document.getElementById('next-btn');
+const fsLabel   = document.getElementById('fs-label');
+const tocPanel  = document.getElementById('toc-panel');
+const tocList   = document.getElementById('toc-list');
+const chInd     = document.getElementById('chapter-indicator');
+
+function goPage(i) {
+  if (i < 0 || i >= PAGES.length) return;
+  cur = i;
+  const p = PAGES[i];
+  content.innerHTML = i === 0
+    ? p.html
+    : `<div class="section-tag">${p.section}</div><div class="ch-title">${p.title}</div>${p.html}`;
+  const pct = Math.round((i / (PAGES.length - 1)) * 100);
+  progFill.style.width = pct + '%';
+  progLabel.textContent = `${i + 1} de ${PAGES.length}`;
+  chInd.textContent = p.section || 'Portada';
+  prevBtn.disabled = i === 0;
+  nextBtn.disabled = i === PAGES.length - 1;
+  window.scrollTo(0, 0);
+  document.getElementById('screen').scrollTop = 0;
+  document.documentElement.scrollTop = 0;
+  document.body.scrollTop = 0;
+  closeTOC();
+}
+
+function buildTOC() {
+  tocList.innerHTML = '';
+  PAGES.forEach((p, i) => {
+    const li = document.createElement('li');
+    li.className = 'toc-item';
+    li.innerHTML = `<span class="toc-num">${p.section || 'Portada'}</span><span class="toc-name">${p.title}</span>`;
+    li.addEventListener('click', () => goPage(i));
+    tocList.appendChild(li);
+  });
+}
+function openTOC() { tocOpen = true; buildTOC(); tocPanel.classList.add('open'); }
+function closeTOC(){ tocOpen = false; tocPanel.classList.remove('open'); }
+
+document.getElementById('home-btn').addEventListener('click', () => goPage(0));
+document.getElementById('toc-btn').addEventListener('click', () => tocOpen ? closeTOC() : openTOC());
+document.getElementById('toc-close').addEventListener('click', closeTOC);
+document.getElementById('prev-btn').addEventListener('click', () => goPage(cur - 1));
+document.getElementById('next-btn').addEventListener('click', () => goPage(cur + 1));
+
+document.getElementById('fup').addEventListener('click', () => {
+  if (fs < 40) { fs += 2; document.documentElement.style.setProperty('--fs', fs+'px'); fsLabel.textContent = fs; }
+});
+document.getElementById('fdn').addEventListener('click', () => {
+  if (fs > 14) { fs -= 2; document.documentElement.style.setProperty('--fs', fs+'px'); fsLabel.textContent = fs; }
+});
+
+function setTheme(t) {
+  screen.classList.remove('dark','white');
+  ['th-sepia','th-white','th-dark'].forEach(id => document.getElementById(id).classList.remove('active'));
+  if (t === 'dark')       { screen.classList.add('dark');  document.getElementById('th-dark').classList.add('active'); }
+  else if (t === 'white') { screen.classList.add('white'); document.getElementById('th-white').classList.add('active'); }
+  else                    { document.getElementById('th-sepia').classList.add('active'); }
+}
+document.getElementById('th-sepia').addEventListener('click', () => setTheme('sepia'));
+document.getElementById('th-white').addEventListener('click', () => setTheme('white'));
+document.getElementById('th-dark').addEventListener('click',  () => setTheme('dark'));
+
+let tx = 0;
+screen.addEventListener('touchstart', e => { tx = e.touches[0].clientX; }, { passive: true });
+screen.addEventListener('touchend', e => {
+  const dx = e.changedTouches[0].clientX - tx;
+  if (Math.abs(dx) > 60) { if (dx < 0) goPage(cur+1); else goPage(cur-1); }
+}, { passive: true });
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight') goPage(cur+1);
+  if (e.key === 'ArrowLeft')  goPage(cur-1);
+});
+
+goPage(0);
+</script>
+</body>
+</html>
